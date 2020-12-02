@@ -1,21 +1,33 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
-}
-
 group 'com.github.pvasilev'
 version '1.0.0'
 
-repositories {
-    mavenCentral()
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72"
+    }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
+subprojects { project ->
+    repositories {
+        mavenCentral()
+    }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    if (project.name != "compiler-plugin") {
+        apply plugin: "org.jetbrains.kotlin.jvm"
+
+        dependencies {
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+        }
+
+        compileKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+        compileTestKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
 }

@@ -1,2 +1,8 @@
 rootProject.name = 'napt'
 
+include(
+	":gradle-plugin",
+	":compiler-plugin",
+	":common",
+	":sample"
+)

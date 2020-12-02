@@ -1,0 +1,14 @@
+apply plugin: "java-gradle-plugin"
+
+gradlePlugin {
+	plugins {
+		naptPlugin {
+			id = "napt"
+			implementationClass = "com.github.pvasilev.napt.NaptGradlePlugin"
+		}
+	}
+}
+
+dependencies {
+	implementation project(":common")
+}
