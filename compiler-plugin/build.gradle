@@ -8,14 +8,30 @@ sourceSets {
 	}
 }
 
+java {
+	modularity.inferModulePath = true
+}
+
 compileJava {
 	sourceCompatibility "1.8"
 	targetCompatibility "1.8"
+	options.fork = true
+	options.forkOptions.javaHome = file(System.getenv("JAVA_8_HOME"))
 }
 
 compileJava9Java {
 	sourceCompatibility "1.9"
 	targetCompatibility "1.9"
+	options.fork = true
+	options.forkOptions.javaHome = file(System.getenv("JAVA_9_HOME"))
+	options.compilerArgs = [
+		"--add-exports",
+		"jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+		"--add-exports",
+		"jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+		"--add-exports",
+		"jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED"
+	]
 }
 
 jar {
@@ -26,6 +42,6 @@ jar {
 }
 
 dependencies {
-	implementation project(":common")
-	java9Implementation project(":common")
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
 }

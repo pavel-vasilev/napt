@@ -10,5 +10,5 @@ gradlePlugin {
 }
 
 dependencies {
-	implementation project(":common")
+	implementation project(":compiler-plugin")
 }
