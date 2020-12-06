@@ -11,4 +11,5 @@ gradlePlugin {
 
 dependencies {
 	implementation project(":compiler-plugin")
+	implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72"
 }

@@ -1,24 +1,48 @@
 package com.github.pvasilev.napt
 
+import com.github.pvasilev.napt.Constants.KT_CLASSES_DIR
 import com.github.pvasilev.napt.Constants.PLUGIN_NAME
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class NaptGradlePlugin : Plugin<Project> {
 
 	companion object {
-		const val COMPILE_ONLY_CONFIGURATION = "compileOnly"
+		const val JAVA = "Java"
+		const val JAVA_WITH_JAVAC = "JavaWithJavac"
+		const val KOTLIN = "Kotlin"
+		const val APT_CONFIGURATION = "annotationProcessor"
 	}
 
 	@Suppress("UnstableApiUsage")
 	override fun apply(project: Project) {
-		project.tasks.withType(JavaCompile::class.java).configureEach { task ->
-			task.options.compilerArgs.add("-Xplugin:$PLUGIN_NAME")
+		val taskNameToOutputs = mutableMapOf<String, String>()
+
+		project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
+			taskNameToOutputs[task.name] = task.outputs.files.asPath
 		}
 
-		val compileOnlyDeps = project.configurations.getByName(COMPILE_ONLY_CONFIGURATION).dependencies
+		project.tasks.withType(JavaCompile::class.java).configureEach { task ->
+			val ktCompileTask = if (task.name.endsWith(JAVA_WITH_JAVAC)) {
+				task.name.replace(JAVA_WITH_JAVAC, KOTLIN)
+			} else {
+				task.name.replace(JAVA, KOTLIN)
+			}
+			val outputs = taskNameToOutputs[ktCompileTask]
+			task.options.compilerArgs.addAll(
+				listOf(
+					"-Xplugin:$PLUGIN_NAME",
+					"-XD$KT_CLASSES_DIR=$outputs"
+				)
+			)
+		}
+
 		val compilerPlugin = project.dependencies.create("com.github.pvasilev:napt-compiler-plugin:1.0.0")
-		compileOnlyDeps.add(compilerPlugin)
+		project.configurations
+			.filter { it.name.contains(APT_CONFIGURATION, ignoreCase = true) }
+			.map { it.dependencies }
+			.forEach { it.add(compilerPlugin) }
 	}
 }
