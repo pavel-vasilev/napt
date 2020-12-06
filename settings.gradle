@@ -1,7 +1,8 @@
-rootProject.name = 'napt'
+include(":sample")
 
-include(
-	":gradle-plugin",
-	":compiler-plugin",
-	":sample"
-)
+includeBuild('lib') {
+	dependencySubstitution {
+		substitute module('com.github.pvasilev:napt-gradle-plugin') with project(':gradle-plugin')
+		substitute module('com.github.pvasilev:napt-compiler-plugin') with project(':compiler-plugin')
+	}
+}
