@@ -6,6 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.File
 
 class NaptGradlePlugin : Plugin<Project> {
 
@@ -18,10 +19,10 @@ class NaptGradlePlugin : Plugin<Project> {
 
 	@Suppress("UnstableApiUsage")
 	override fun apply(project: Project) {
-		val taskNameToOutputs = mutableMapOf<String, String>()
+		val taskNameToOutputs = mutableMapOf<String, File>()
 
 		project.tasks.withType(KotlinCompile::class.java).configureEach { task ->
-			taskNameToOutputs[task.name] = task.outputs.files.asPath
+			taskNameToOutputs[task.name] = task.outputs.files.singleFile
 		}
 
 		project.tasks.withType(JavaCompile::class.java).configureEach { task ->
@@ -30,11 +31,11 @@ class NaptGradlePlugin : Plugin<Project> {
 			} else {
 				task.name.replace(JAVA, KOTLIN)
 			}
-			val outputs = taskNameToOutputs[ktCompileTask]
+			val outputs = taskNameToOutputs[ktCompileTask] ?: return@configureEach
 			task.options.compilerArgs.addAll(
 				listOf(
 					"-Xplugin:$PLUGIN_NAME",
-					"-XD$KT_CLASSES_DIR=$outputs"
+					"-XD$KT_CLASSES_DIR=${outputs.toRelativeString(project.rootDir)}"
 				)
 			)
 		}
