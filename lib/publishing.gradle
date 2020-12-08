@@ -1,0 +1,48 @@
+apply plugin: "maven-publish"
+apply plugin: "signing"
+apply plugin: "java"
+
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.github.pavel-vasilev'
+			artifactId = "napt-${project.name}"
+			version = '1.0.1'
+			artifact jar
+			artifact sourcesJar
+			artifact javadocJar
+
+			pom {
+				name = "napt-${project.name}"
+				description = "napt-${project.name}"
+				url = "https://github.com/pavel-vasilev/napt"
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						name = 'Pavel Vasilev'
+						email = 'pavel.v96@yandex.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/pavel-vasilev/napt.git'
+					developerConnection = 'scm:git:ssh://github.com/pavel-vasilev/napt.git'
+					url = 'https://github.com/pavel-vasilev/napt'
+				}
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.maven
+}

@@ -13,18 +13,7 @@ subprojects { project ->
 		mavenCentral()
 	}
 
-	apply plugin: "maven-publish"
-
-	publishing {
-		publications {
-			maven(MavenPublication) {
-				groupId = 'com.github.pvasilev'
-				artifactId = "napt-${project.name}"
-				version = '1.0.0'
-				artifact "${project.buildDir}/libs/${project.name}.jar"
-			}
-		}
-	}
+	apply from: "$rootDir/publishing.gradle"
 
 	if (project.name != "compiler-plugin") {
 		apply plugin: "org.jetbrains.kotlin.jvm"

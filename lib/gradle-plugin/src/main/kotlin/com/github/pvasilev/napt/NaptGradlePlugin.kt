@@ -40,7 +40,7 @@ class NaptGradlePlugin : Plugin<Project> {
 			)
 		}
 
-		val compilerPlugin = project.dependencies.create("com.github.pvasilev:napt-compiler-plugin:1.0.0")
+		val compilerPlugin = project.dependencies.create("com.github.pavel-vasilev:napt-compiler-plugin:1.0.1")
 		project.configurations
 			.filter { it.name.contains(APT_CONFIGURATION, ignoreCase = true) }
 			.map { it.dependencies }
